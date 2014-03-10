@@ -26,7 +26,6 @@ helpers do
   def delete_post_button(post_id)
     erb :_delete_post_button, locals: { post_id: post_id}
   end
-
 end
 
 get "/" do
@@ -41,7 +40,7 @@ get "/posts/new" do
 end
 
 post "/posts" do
-  @post = Post.new(params[:posts])
+  @post = Post.new(params[:post])
   if @post.save
     redirect "posts/#{@post.id}"
   else
@@ -77,5 +76,5 @@ end
 
 get "/about" do
   @title = "About Me"
-  erb :"pages.about"
+  erb :"pages/about"
 end
