@@ -4,6 +4,8 @@ require "sinatra/activerecord"
 set :database, "sqlite3:///blog.db"
 
 class Post < ActiveRecord::Base
+  validates :title, presence: true, length: { minimum: 3 }
+  validates :body, presence: true
 end
 
 helpers do
@@ -16,7 +18,7 @@ helpers do
   end
 
   def post_show_page?
-    request.path_info =~ /\/posts\/\dd+$/
+    request.path_info =~ /\/posts\/\d+$/
   end
 
   def pretty_date(time)
@@ -24,7 +26,7 @@ helpers do
   end
 
   def delete_post_button(post_id)
-    erb :_delete_post_button, locals: { post_id: post_id}
+    erb :_delete_post_button, locals: { post_id: post_id }
   end
 end
 
@@ -69,9 +71,13 @@ put "/posts/:id" do
   end
 end
 
-delete "posts/:id" do
-  @post = Post.find(params[:id]).destroy
-  redirect "/"
+delete "/posts/:id" do
+  post = Post.find(params[:id])
+  if post.destroy
+    redirect "/"
+  else
+    erb :"posts/error"
+  end
 end
 
 get "/about" do
